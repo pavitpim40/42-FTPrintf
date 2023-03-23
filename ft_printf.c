@@ -6,14 +6,15 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:59:24 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 00:18:17 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
 
-char	*get_hex_address(size_t x, char format)
+// FOR HEX
+char	*hex_str(size_t x, char format)
 {
 	char	*hex;
 	char	*res;
@@ -44,12 +45,13 @@ char	*address_to_str(size_t p)
 {
 	char	*str;
 
-	str = get_hex_address(p, 'x');
+	str = hex_str(p, 'x');
 	if (str == NULL)
 		return (NULL);
 	return (str);
 }
 
+// FOR D
 char	*d_to_str(int d)
 {
 	char	*str;
@@ -60,7 +62,44 @@ char	*d_to_str(int d)
 	return (str);
 }
 
-// MINE
+
+// FOR U
+
+char	*uint_str(unsigned int d)
+{
+	char	*str;
+	size_t	len;
+
+	len = ft_uint_len(d);
+	str = (char *)ft_calloc(sizeof(char), len + 1);
+	if (str == NULL)
+		return (NULL);
+	str[len - 1] = '0'; // why not '\0'
+	while(d > 0)
+	{
+		str[len - 1] = (d % 10) + '0';
+		d = d / 10;
+		len--;
+	}
+
+	return (str);
+}
+
+char	*uint_to_str(unsigned int u)
+{
+	char	*str;
+
+	str = uint_str(u);
+	if (str == NULL)
+		return (NULL);
+	return (str);
+}
+
+
+
+
+
+// MINE PRINT
 
 int ft_print_c(va_list *ap)
 {
@@ -106,7 +145,7 @@ int ft_print_p(va_list *ap)
 	free(address_str);
 	return (len);
 }
-// PRINT D
+
 int ft_print_d(va_list *ap)
 {
 	int	nbr;
@@ -123,6 +162,20 @@ int ft_print_d(va_list *ap)
 	return (len);
 }
 
+int ft_print_u(va_list *ap)
+{
+	char *s;
+	unsigned int nbr;
+	size_t len;
+
+	nbr = va_arg(*ap, unsigned int);
+	s = uint_to_str(nbr);
+	len = ft_strlen(s);
+	ft_putstr_fd(s,1);
+	free(s);
+	return (len);
+}
+
 
 
 
@@ -133,7 +186,8 @@ int	ft_printf(const char *format, ...)
 	int total_len;
 	va_list ap; // ap : argument process
 	// char *s;
-	// int nbr;
+	// unsigned int nbr;
+	// int len;
 	// size_t ptr;
 
 	i = 0;
@@ -152,6 +206,9 @@ int	ft_printf(const char *format, ...)
 				total_len += ft_print_p(&ap);
 			else if(*(format + i) == 'd' || *(format + i) == 'i')
 				total_len += ft_print_d(&ap);
+			else if(*(format + i) == 'u')
+				total_len += ft_print_u(&ap);
+			
 			
 			
 		}

@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:36:29 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 00:09:44 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	ft_putstr_fd(char *s, int fd);
 
 size_t	ft_strlen(const char *s);
 size_t	ft_intlen_base(size_t nb, int div);
+size_t	ft_uint_len(unsigned int d);
 
 char	*ft_strjoin(char const *s1, char const *s2);
 

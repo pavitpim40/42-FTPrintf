@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 22:52:41 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 22:54:06 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 00:09:52 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,21 @@ size_t	ft_intlen_base(size_t nb, int div)
 	while (number)
 	{
 		number /= div;
+		i++;
+	}
+	return (i);
+}
+
+size_t	ft_uint_len(unsigned int d)
+{
+	int	i;
+
+	i = 0;
+	if(d == 0)
+		return (1);
+	while(d > 0)
+	{
+		d = d / 10;
 		i++;
 	}
 	return (i);
