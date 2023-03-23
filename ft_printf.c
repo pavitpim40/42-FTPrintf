@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 22:18:34 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 22:28:28 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ char	*p_type_str(size_t p)
 
 // MINE
 
-int ft_print_char(va_list *ap)
+int ft_print_c(va_list *ap)
 {
 	char c;
 	
@@ -137,7 +137,7 @@ int ft_print_char(va_list *ap)
 	
 }
 
-int ft_print_str(va_list *ap)
+int ft_print_s(va_list *ap)
 {
 	char *s;
 	int len;
@@ -156,13 +156,28 @@ int ft_print_str(va_list *ap)
 	}
 	return (len);
 }
+
+int ft_print_p(va_list *ap)
+{
+	size_t address;
+	char	*address_str;
+	int len;
+
+	len = 0;
+	address = va_arg(*ap,size_t);
+	address_str = p_type_str(address);
+	ft_putstr_fd(address_str,1);
+	len += (int)ft_strlen(address_str);
+	free(address_str);
+	return (len);
+}
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
-	char *s;
-	size_t ptr;
+	// char *s;
+	// size_t ptr;
 
 	i = 0;
 	total_len = 0;
@@ -173,18 +188,11 @@ int	ft_printf(const char *format, ...)
 		{
 			i++;
 			if(*(format + i) == 'c')
-				total_len += ft_print_char(&ap);	
+				total_len += ft_print_c(&ap);	
 			else if(*(format + i) == 's')
-				total_len += ft_print_str(&ap);
+				total_len += ft_print_s(&ap);
 			else if(*(format + i) == 'p')
-			{
-				ptr = va_arg(ap,size_t);
-				// printf("PTR IS : %zu",ptr);
-				s = p_type_str(ptr);
-				ft_putstr_fd(s,1);
-				total_len += (int)ft_strlen(s);
-				free(s);
-			}
+				total_len += ft_print_p(&ap);
 		}
 		else 
 			total_len += write(1, format + i, 1);
