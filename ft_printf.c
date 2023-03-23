@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:03:46 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 23:48:00 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,31 @@ int ft_print_p(va_list *ap)
 	free(address_str);
 	return (len);
 }
+// PRINT D
 
+char	*d_type_str(int d)
+{
+	char	*str;
+
+	str = ft_itoa(d);
+	if (str == NULL)
+		return (NULL);
+	return (str);
+}
+
+
+
+// int ft_print_d(va_list *ap)
+// {
+	
+// }
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
-	// char *s;
+	char *s;
+	int nbr;
 	// size_t ptr;
 
 	i = 0;
@@ -124,6 +142,15 @@ int	ft_printf(const char *format, ...)
 				total_len += ft_print_s(&ap);
 			else if(*(format + i) == 'p')
 				total_len += ft_print_p(&ap);
+			else if(*(format + i) == 'd' || *(format + i) == 'i') 
+			{
+				nbr = va_arg(ap,int);
+				s = d_type_str(nbr);
+				total_len += ft_strlen(s);
+				ft_putstr_fd(s,1);
+				free(s);
+			}
+			
 		}
 		else 
 			total_len += write(1, format + i, 1);
