@@ -6,15 +6,56 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 00:59:22 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 01:52:37 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
 
-// FOR HEX
-char	*hex_str(size_t x, char format)
+// ############################################
+// ################## CONVERT NUM -> TO STR BASE
+// ############################################
+
+char	*nbr_to_str_dec(int d)
+{
+	char	*str;
+
+	str = ft_itoa(d);
+	if (str == NULL)
+		return (NULL);
+	return (str);
+}
+
+char	*uint_to_str_base(unsigned int x, char type,unsigned int base)
+{
+	char	*set;
+	char	*res;
+	int		len;
+
+	if (type == 'x')
+		set = "0123456789abcdef";
+	else if(type == 'X')
+		set = "0123456789ABCDEF";
+	else if (type == 'd')
+		set = "0123456789";
+	len = ft_uint_len(x, base);
+	res = (char *)ft_calloc(sizeof(char), len + 1);
+	if (res == NULL)
+		return (NULL);
+	while (x >= base)
+	{
+		*(res + len - 1) = set[x % base];
+		x /= base;
+		len--;
+	}
+	*(res) = set[x];
+	return (res);
+}
+
+
+
+char	*ulong_to_str_hex(size_t x, char format)
 {
 	char	*hex;
 	char	*res;
@@ -41,106 +82,23 @@ char	*hex_str(size_t x, char format)
 	return (res2);
 }
 
+
 char	*ptr_to_str(size_t p)
 {
 	char	*str;
 
-	str = hex_str(p, 'x');
+	str = ulong_to_str_hex(p, 'x');
 	if (str == NULL)
 		return (NULL);
 	return (str);
 }
 
-// FOR D
-char	*d_to_str(int d)
-{
-	char	*str;
-
-	str = ft_itoa(d);
-	if (str == NULL)
-		return (NULL);
-	return (str);
-}
-
-
-// FOR U
-
-char	*uint_str(unsigned int d)
-{
-	char	*str;
-	size_t	len;
-
-	len = ft_uint_len(d,10);
-	str = (char *)ft_calloc(sizeof(char), len + 1);
-	if (str == NULL)
-		return (NULL);
-	str[len - 1] = '0'; // why not '\0'
-	while(d > 0)
-	{
-		str[len - 1] = (d % 10) + '0';
-		d = d / 10;
-		len--;
-	}
-
-	return (str);
-}
-
-char	*uint_to_str(unsigned int u)
-{
-	char	*str;
-
-	str = uint_str(u);
-	if (str == NULL)
-		return (NULL);
-	return (str);
-}
-
-
-
-// HEX
-
-char	*uint_to_hex_str(unsigned int x, char format)
-{
-	char	*hex;
-	char	*res;
-	// int		i;
-	int		len;
-
-	if (format == 'x')
-		hex = "0123456789abcdef";
-	else
-		hex = "0123456789ABCDEF";
-	// i = 0;
-	len = ft_uint_len(x, 16);
-	res = (char *)ft_calloc(sizeof(char), len + 1);
-	if (res == NULL)
-		return (0);
-	while (x >= 16)
-	{
-		*(res + len - 1) = hex[x % 16];
-		x /= 16;
-		len--;
-	}
-	*(res) = hex[x];
-	return (res);
-}
-
-char	*x_to_str(unsigned int x, char type)
-{
-	char	*str;
-
-	str = uint_to_hex_str(x, type);
-	if (str == NULL)
-		return (NULL);
-	return (str);
-}
-
-
-
-// MINE PRINT
+// ############################################
+// ################## PRINT EACH TYPE -> TO STR
+// ############################################
 
 // type c
-int ft_print_c(va_list *ap)
+int print_char(va_list *ap)
 {
 	char c;
 	
@@ -150,28 +108,8 @@ int ft_print_c(va_list *ap)
 	
 }
 
-void	ft_putnbr_fd(int n, int fd)
-{
-	if (n == -2147483648)
-	{
-		ft_putstr_fd("-2147483648", fd);
-		return ;
-	}
-	if (n < 0)
-	{
-		ft_putchar_fd('-', fd);
-		n = -n;
-	}
-	if (n >= 10)
-	{
-		ft_putnbr_fd(n / 10, fd);
-		ft_putnbr_fd(n % 10, fd);
-	}
-	else
-		ft_putchar_fd(n + '0', fd);
-}
 // type char *
-int ft_print_s(va_list *ap)
+int print_str(va_list *ap)
 {
 	char *s;
 	int len;
@@ -192,7 +130,7 @@ int ft_print_s(va_list *ap)
 }
 
 // type unsigned long -> hex
-int ft_print_p(va_list *ap)
+int print_ptr_to_str(va_list *ap)
 {
 	size_t address;
 	char	*address_str;
@@ -207,8 +145,8 @@ int ft_print_p(va_list *ap)
 	return (len);
 }
 
-// type int -> str
-int ft_print_d(va_list *ap)
+// type int -> str (i,d)
+int print_nbr_to_str(va_list *ap)
 {
 	int	nbr;
 	char *s;
@@ -216,53 +154,23 @@ int ft_print_d(va_list *ap)
 
 	// len = 0;
 	nbr = va_arg(*ap, int);
-	s = d_to_str(nbr);
+	s = nbr_to_str_dec(nbr);
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
-	// ft_putnbr_fd(nbr,1);
 	free(s);
 
 	return (len);
 }
 
 // type unsigned int -> hex
-int ft_print_u(va_list *ap)
-{
-	char *s;
-	unsigned int nbr;
-	size_t len;
-
-	nbr = va_arg(*ap, unsigned int);
-	s = uint_to_str(nbr);
-	len = ft_strlen(s);
-	ft_putstr_fd(s,1);
-	free(s);
-	return (len);
-}
-
-// type unsigned int -> hex
-int ft_print_x(va_list *ap)
+int print_uint_to_strbase(va_list *ap, char type,unsigned int base)
 {
 	unsigned int nbr;
 	char *s;
 	int	len;
 	
 	nbr = va_arg(*ap, unsigned int);
-	s = x_to_str(nbr, 'x');
-	len = ft_strlen(s);
-	ft_putstr_fd(s,1);
-	free(s);
-	return (len);
-}
-
-int ft_print_X(va_list *ap)
-{
-	unsigned int nbr;
-	char *s;
-	int	len;
-	
-	nbr = va_arg(*ap, unsigned int);
-	s = x_to_str(nbr, 'X');
+	s = uint_to_str_base(nbr, type,base);
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
 	free(s);
@@ -277,10 +185,6 @@ int	ft_printf(const char *format, ...)
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
-	// char *s;
-	// unsigned int nbr;
-	// int len;
-	// size_t ptr;
 
 	i = 0;
 	total_len = 0;
@@ -291,19 +195,19 @@ int	ft_printf(const char *format, ...)
 		{
 			i++;
 			if(*(format + i) == 'c')
-				total_len += ft_print_c(&ap);	
+				total_len += print_char(&ap);	
 			else if(*(format + i) == 's')
-				total_len += ft_print_s(&ap);
+				total_len += print_str(&ap);
 			else if(*(format + i) == 'p')
-				total_len += ft_print_p(&ap);
+				total_len += print_ptr_to_str(&ap);
 			else if(*(format + i) == 'd' || *(format + i) == 'i')
-				total_len += ft_print_d(&ap);
+				total_len += print_nbr_to_str(&ap);
 			else if(*(format + i) == 'u')
-				total_len += ft_print_u(&ap);
+				total_len += print_uint_to_strbase(&ap,'d',10);
 			else if(*(format +i) == 'x')
-				total_len += ft_print_x(&ap);
+				total_len += print_uint_to_strbase(&ap,'x',16);
 			else if(*(format +i) == 'X')
-				total_len += ft_print_X(&ap);
+				total_len += print_uint_to_strbase(&ap,'X',16);
 			else if(*(format +i) == '%')
 				total_len += write(1, "%",1);
 			
