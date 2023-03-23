@@ -6,61 +6,62 @@
 #    By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/23 19:54:43 by ppimchan          #+#    #+#              #
-#    Updated: 2023/03/23 19:54:57 by ppimchan         ###   ########.fr        #
+#    Updated: 2023/03/23 20:54:28 by ppimchan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-DIRSRC	=	./
+NAME		= libftprintf.a
+CC			= gcc
+CFLAGS		= -Wall -Wextra -Werror
+RM 			= /bin/rm -f
 
-SRC		=	ft_printf.c
+LIBFT_DIR	= ./libft
+LIBFT		= $(LIBFT_DIR)/libft.a
 
+BUILD_DIR	= build
+SRC_DIR		= ./ft_printf
+SRCS		= 	ft_printf.c \
 
-BONUS	=
+OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
-EXTRA	=
+all: $(NAME)
 
-SRCS	= ${addprefix ${DIRSRC}, ${SRC}}
+$(NAME): $(OBJS) $(LIBFT)
+	@echo "Linking $@"
+	@ar rc $(NAME) $(OBJS)
+	@echo "Done!"
 
-BONUS_SRCS = ${addprefix ${DIRSRC}, ${BONUS}}
+$(OBJS): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	@echo "Compiling $<"
+	@$(CC) $(CFLAGS) -I $(SRCS) -I $(LIBFT_DIR) -c $< -o $@
 
-EXTRA_SRCS = ${addprefix ${DIRSRC}, ${EXTRA}}
+$(LIBFT):
+	make -C $(LIBFT_DIR)
+	cp $(LIBFT) $(NAME)
 
-OBJS	= ${SRCS:.c=.o}
-
-BONUS_OBJS = ${BONUS_SRCS:.c=.o}
-
-EXRTA_OBJS = ${EXTRA_SRCS:.c=.o}
-
-HEAD	= .
-
-NAME	= libftprintf.a
-
-CC		= gcc
-
-RM		= rm -f
-
-CFLAGS	= -Wall -Wextra -Werror
-
-.c.o:
-			${CC} ${CFLAGS} -c -I ${HEAD} $< -o ${<:.c=.o}
-
-all:		${NAME}
-
-${NAME}:	${OBJS}
-			ar rc ${NAME} ${OBJS}
-
-bonus:		${OBJS} ${BONUS_OBJS}
-			ar rc ${NAME} ${OBJS} ${BONUS_OBJS}
-
-extra:	${OBJS} ${BONUS_OBJS} ${EXRTA_OBJS}
-			ar rc ${NAME} ${OBJS} ${BONUS_OBJS} ${EXRTA_OBJS}
+bonus: all
 
 clean:
-			${RM} ${OBJS} ${BONUS_OBJS} ${EXRTA_OBJS}
+	make clean -C $(LIBFT_DIR)
+	$(RM) -r $(BUILD_DIR)
 
-fclean:		clean
-			${RM} ${NAME}
+fclean: clean
+	make fclean -C $(LIBFT_DIR)
+	$(RM) $(NAME)
 
-re:			fclean	all
+re: fclean all
 
-.PHONY:		all	clean	fclean	re
+rebonus: fclean bonus
+
+test: re
+	@$(CC) main.c -lftprintf -L . -I $(SRCS) -o runner.out
+	@echo "\033[0;32m=== RUNNER ===\033[0m"
+	@./runner.out
+
+testmem: re
+	@$(CC) $(CFLAGS) main.c -lftprintf -L . -I $(SRCS) -o runner.out
+	@echo "\033[0;32m=== RUNNER ===\033[0m"
+	@valgrind -q --leak-check=full --track-origins=yes ./runner.out
+	
+.PHONY: all clean fclean re
