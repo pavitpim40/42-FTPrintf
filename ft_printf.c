@@ -6,22 +6,47 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 20:52:20 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 21:51:08 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include "libft.h"
 
 
+int ft_print_char(va_list *ap)
+{
+	char c;
+	
+	c = va_arg(*ap, int);
+	ft_putchar_fd(c,1);
+	return (1);
+	
+}
 
+int ft_print_str(va_list *ap)
+{
+	char *s;
+	int len;
+	
+	len = 0;
+	s = va_arg(*ap, char *);
+	if(s)
+	{
+		len += ft_strlen(s);
+		ft_putstr_fd(s,1);
+	} 
+	else
+	{
+		ft_putstr_fd("(null)",4);
+		len = 6;
+	}
+	return (len);
+}
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
-	char c;
-	char *s;
 
 	i = 0;
 	total_len = 0;
@@ -32,28 +57,11 @@ int	ft_printf(const char *format, ...)
 		{
 			i++;
 			if(*(format + i) == 'c')
-			{
-				c = va_arg(ap, int);
-				total_len += write(1, (unsigned char *)&c,1);
-			}
+				total_len += ft_print_char(&ap);	
 			else if(*(format + i) == 's')
-			{
-				s = va_arg(ap, char *);
-				if(s)
-				{
-					total_len += ft_strlen(s);
-				ft_putstr_fd(s,1);
-				} 
-				else
-				{
-					total_len += 6;
-					ft_putstr_fd("(null)",4);
-				}
-				
-			}
-				
+				total_len += ft_print_str(&ap);		
 		}
-		else
+		else 
 			total_len += write(1, format + i, 1);
 		i++;
 	}
@@ -66,7 +74,7 @@ int	ft_printf(const char *format, ...)
 
 	// # MAN-CHAR
 	// printf("%c", '0');
-	// ft_printf(" %c ", '0');
+	// printf("%d",ft_printf(" %c ", '0'));
 	// printf(" %c", '0' - 256);
 	// printf("%c ", '0' + 256);
 	// printf(" %c %c %c ", '0', 0, '1');

@@ -1,24 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.h                                        :+:      :+:    :+:   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 19:50:03 by ppimchan         ###   ########.fr       */
+/*   Created: 2023/03/23 20:27:17 by ppimchan          #+#    #+#             */
+/*   Updated: 2023/03/23 21:40:09 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#include "ft_printf.h"
 
-# include	<stdlib.h>
-# include	<limits.h>
-# include	<stdarg.h>
-# include	<unistd.h>
-# include	<stdio.h>
-
-int		ft_printf(const char *format, ...);
-
-#endif
+void	ft_putchar_fd(char c, int fd)
+{
+	write (fd, &c, 1);
+}

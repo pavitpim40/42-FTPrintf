@@ -6,11 +6,11 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 20:39:41 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 20:40:12 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 21:40:16 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_printf.h"
 
 size_t	ft_strlen(const char *s)
 {
