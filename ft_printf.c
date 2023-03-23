@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 00:18:17 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 00:52:55 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*hex_str(size_t x, char format)
 	return (res2);
 }
 
-char	*address_to_str(size_t p)
+char	*ptr_to_str(size_t p)
 {
 	char	*str;
 
@@ -70,7 +70,7 @@ char	*uint_str(unsigned int d)
 	char	*str;
 	size_t	len;
 
-	len = ft_uint_len(d);
+	len = ft_uint_len(d,10);
 	str = (char *)ft_calloc(sizeof(char), len + 1);
 	if (str == NULL)
 		return (NULL);
@@ -97,10 +97,49 @@ char	*uint_to_str(unsigned int u)
 
 
 
+// HEX
+
+char	*uint_to_hex_str(unsigned int x, char format)
+{
+	char	*hex;
+	char	*res;
+	// int		i;
+	int		len;
+
+	if (format == 'x')
+		hex = "0123456789abcdef";
+	else
+		hex = "0123456789ABCDEF";
+	// i = 0;
+	len = ft_uint_len(x, 16);
+	res = (char *)ft_calloc(sizeof(char), len + 1);
+	if (res == NULL)
+		return (0);
+	while (x >= 16)
+	{
+		*(res + len - 1) = hex[x % 16];
+		x /= 16;
+		len--;
+	}
+	*(res) = hex[x];
+	return (res);
+}
+
+char	*x_to_str(unsigned int x, char type)
+{
+	char	*str;
+
+	str = uint_to_hex_str(x, type);
+	if (str == NULL)
+		return (NULL);
+	return (str);
+}
+
 
 
 // MINE PRINT
 
+// type c
 int ft_print_c(va_list *ap)
 {
 	char c;
@@ -111,6 +150,7 @@ int ft_print_c(va_list *ap)
 	
 }
 
+// type char *
 int ft_print_s(va_list *ap)
 {
 	char *s;
@@ -131,6 +171,7 @@ int ft_print_s(va_list *ap)
 	return (len);
 }
 
+// type unsigned long -> hex
 int ft_print_p(va_list *ap)
 {
 	size_t address;
@@ -139,13 +180,14 @@ int ft_print_p(va_list *ap)
 
 	// len = 0;
 	address = va_arg(*ap,size_t);
-	address_str = address_to_str(address);
+	address_str = ptr_to_str(address);
 	ft_putstr_fd(address_str,1);
 	len = (int)ft_strlen(address_str);
 	free(address_str);
 	return (len);
 }
 
+// type int -> str
 int ft_print_d(va_list *ap)
 {
 	int	nbr;
@@ -162,6 +204,7 @@ int ft_print_d(va_list *ap)
 	return (len);
 }
 
+// type unsigned int -> hex
 int ft_print_u(va_list *ap)
 {
 	char *s;
@@ -176,6 +219,34 @@ int ft_print_u(va_list *ap)
 	return (len);
 }
 
+// type unsigned int -> hex
+int ft_print_x(va_list *ap)
+{
+	unsigned int nbr;
+	char *s;
+	int	len;
+	
+	nbr = va_arg(*ap, unsigned int);
+	s = x_to_str(nbr, 'x');
+	len = ft_strlen(s);
+	ft_putstr_fd(s,1);
+	free(s);
+	return (len);
+}
+
+int ft_print_X(va_list *ap)
+{
+	unsigned int nbr;
+	char *s;
+	int	len;
+	
+	nbr = va_arg(*ap, unsigned int);
+	s = x_to_str(nbr, 'X');
+	len = ft_strlen(s);
+	ft_putstr_fd(s,1);
+	free(s);
+	return (len);
+}
 
 
 
@@ -208,6 +279,12 @@ int	ft_printf(const char *format, ...)
 				total_len += ft_print_d(&ap);
 			else if(*(format + i) == 'u')
 				total_len += ft_print_u(&ap);
+			else if(*(format +i) == 'x')
+				total_len += ft_print_x(&ap);
+			else if(*(format +i) == 'X')
+				total_len += ft_print_X(&ap);
+			else if(*(format +i) == '%')
+				total_len += write(1, "%",1);
 			
 			
 			
