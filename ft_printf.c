@@ -6,16 +6,12 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:48:00 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 23:59:24 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-
-// convert pointer to string need 4 function
-// 1. get_hexaddress_str รับ เลขที่เป็น size_t กับ format x,X
-//  - นำเลขไปนับความยาวโดยใช้ ฐาน 16
 
 char	*get_hex_address(size_t x, char format)
 {
@@ -54,6 +50,15 @@ char	*address_to_str(size_t p)
 	return (str);
 }
 
+char	*d_to_str(int d)
+{
+	char	*str;
+
+	str = ft_itoa(d);
+	if (str == NULL)
+		return (NULL);
+	return (str);
+}
 
 // MINE
 
@@ -72,11 +77,11 @@ int ft_print_s(va_list *ap)
 	char *s;
 	int len;
 	
-	len = 0;
+	// len = 0;
 	s = va_arg(*ap, char *);
 	if(s)
 	{
-		len += ft_strlen(s);
+		len = ft_strlen(s);
 		ft_putstr_fd(s,1);
 	} 
 	else
@@ -93,39 +98,42 @@ int ft_print_p(va_list *ap)
 	char	*address_str;
 	int len;
 
-	len = 0;
+	// len = 0;
 	address = va_arg(*ap,size_t);
 	address_str = address_to_str(address);
 	ft_putstr_fd(address_str,1);
-	len += (int)ft_strlen(address_str);
+	len = (int)ft_strlen(address_str);
 	free(address_str);
 	return (len);
 }
 // PRINT D
-
-char	*d_type_str(int d)
+int ft_print_d(va_list *ap)
 {
-	char	*str;
+	int	nbr;
+	char *s;
+	int	len;
 
-	str = ft_itoa(d);
-	if (str == NULL)
-		return (NULL);
-	return (str);
+	// len = 0;
+	nbr = va_arg(*ap, int);
+	s = d_to_str(nbr);
+	len = ft_strlen(s);
+	ft_putstr_fd(s,1);
+	free(s);
+
+	return (len);
 }
 
 
 
-// int ft_print_d(va_list *ap)
-// {
-	
-// }
+
+
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
-	char *s;
-	int nbr;
+	// char *s;
+	// int nbr;
 	// size_t ptr;
 
 	i = 0;
@@ -142,14 +150,9 @@ int	ft_printf(const char *format, ...)
 				total_len += ft_print_s(&ap);
 			else if(*(format + i) == 'p')
 				total_len += ft_print_p(&ap);
-			else if(*(format + i) == 'd' || *(format + i) == 'i') 
-			{
-				nbr = va_arg(ap,int);
-				s = d_type_str(nbr);
-				total_len += ft_strlen(s);
-				ft_putstr_fd(s,1);
-				free(s);
-			}
+			else if(*(format + i) == 'd' || *(format + i) == 'i')
+				total_len += ft_print_d(&ap);
+			
 			
 		}
 		else 
