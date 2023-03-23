@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_len.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/23 20:39:41 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 21:40:16 by ppimchan         ###   ########.fr       */
+/*   Created: 2023/03/23 22:52:41 by ppimchan          #+#    #+#             */
+/*   Updated: 2023/03/23 22:54:06 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,22 @@ size_t	ft_strlen(const char *s)
 	i = 0;
 	while (s[i] != '\0')
 		i++;
+	return (i);
+}
+
+size_t	ft_intlen_base(size_t nb, int div)
+{
+	int		i;
+	size_t	number;
+
+	i = 0;
+	if (!nb)
+		return (1);
+	number = nb;
+	while (number)
+	{
+		number /= div;
+		i++;
+	}
 	return (i);
 }

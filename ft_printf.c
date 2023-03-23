@@ -6,90 +6,21 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 22:28:28 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/23 23:03:46 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_bzero(void *s, size_t n)
-{
-	char	*str;
-	size_t	i;
 
-	i = 0;
-	str = (char *)s;
-	while (i < n)
-	{
-		str[i] = '\0';
-		i++;
-	}
-}
+// convert pointer to string need 4 function
+// 1. get_hexaddress_str รับ เลขที่เป็น size_t กับ format x,X
+//  - นำเลขไปนับความยาวโดยใช้ ฐาน 16
 
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*res;
-	size_t	i;
-	size_t	len1;
-	size_t	len2;
-
-	i = 0;
-	if (!s1 || !s2)
-		return (0);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	res = malloc(sizeof(char) * (len1 + len2 + 1));
-	if (!res)
-		return (0);
-	while (i < len1)
-	{
-		res[i] = s1[i];
-		i ++;
-	}
-	while (i < len1 + len2)
-	{
-		res[i] = s2[i - len1];
-		i ++;
-	}
-	res[i] = '\0';
-	return (res);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	void	*ptr;
-
-	if (count * size < count && count * size < size)
-		return (NULL);
-	ptr = malloc(count * size);
-	if (ptr == 0)
-		return (ptr);
-	ft_bzero(ptr, count * size);
-	return (ptr);
-}
-
-static size_t	ft_intlen(size_t nb, int div)
-{
-	int		i;
-	size_t	number;
-
-	i = 0;
-	if (!nb)
-		return (1);
-	number = nb;
-	while (number)
-	{
-		number /= div;
-		i++;
-	}
-	return (i);
-}
-
-char	*get_hexaddr_str(size_t x, char format)
+char	*get_hex_address(size_t x, char format)
 {
 	char	*hex;
 	char	*res;
-	// int		i;
 	size_t	len;
 	char	*res2;
 
@@ -97,8 +28,7 @@ char	*get_hexaddr_str(size_t x, char format)
 		hex = "0123456789abcdef";
 	else
 		hex = "0123456789ABCDEF";
-	// i = 0;
-	len = ft_intlen(x, 16);
+	len = ft_intlen_base(x, 16);
 	res = (char *)ft_calloc(sizeof(char), len + 1);
 	if (res == NULL)
 		return (0);
@@ -114,11 +44,11 @@ char	*get_hexaddr_str(size_t x, char format)
 	return (res2);
 }
 
-char	*p_type_str(size_t p)
+char	*address_to_str(size_t p)
 {
 	char	*str;
 
-	str = get_hexaddr_str(p, 'x');
+	str = get_hex_address(p, 'x');
 	if (str == NULL)
 		return (NULL);
 	return (str);
@@ -165,12 +95,13 @@ int ft_print_p(va_list *ap)
 
 	len = 0;
 	address = va_arg(*ap,size_t);
-	address_str = p_type_str(address);
+	address_str = address_to_str(address);
 	ft_putstr_fd(address_str,1);
 	len += (int)ft_strlen(address_str);
 	free(address_str);
 	return (len);
 }
+
 int	ft_printf(const char *format, ...)
 {
 	int	i;
