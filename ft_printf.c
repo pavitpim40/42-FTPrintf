@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 00:52:55 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 00:59:22 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,26 @@ int ft_print_c(va_list *ap)
 	
 }
 
+void	ft_putnbr_fd(int n, int fd)
+{
+	if (n == -2147483648)
+	{
+		ft_putstr_fd("-2147483648", fd);
+		return ;
+	}
+	if (n < 0)
+	{
+		ft_putchar_fd('-', fd);
+		n = -n;
+	}
+	if (n >= 10)
+	{
+		ft_putnbr_fd(n / 10, fd);
+		ft_putnbr_fd(n % 10, fd);
+	}
+	else
+		ft_putchar_fd(n + '0', fd);
+}
 // type char *
 int ft_print_s(va_list *ap)
 {
@@ -199,6 +219,7 @@ int ft_print_d(va_list *ap)
 	s = d_to_str(nbr);
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
+	// ft_putnbr_fd(nbr,1);
 	free(s);
 
 	return (len);
