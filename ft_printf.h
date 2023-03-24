@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 14:54:30 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 16:11:01 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ typedef struct s_list
 	int		f_dot;
 	int 	f_space;
 
-	// int		width;
-	// int		precision;
+	int		width;
+	int		precision;
 
 
 	// int		is_zero;
@@ -69,6 +69,9 @@ char	*ulong_to_str_hex(size_t x, char format);
 char	*nbr_to_str_dec(int d);
 char	*uint_to_str_base(unsigned int x, char type,unsigned int base);
 char	*ft_itoa(int n);
+
+// STRING -> N
+int		ft_atoi(const char *str);
 
 // STR MASTER
 char	*ft_strjoin(char const *s1, char const *s2);

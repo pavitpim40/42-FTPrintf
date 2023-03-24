@@ -6,11 +6,80 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 15:12:13 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 16:14:47 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+// ##FT_IS
+int	ft_isdigit(int c)
+{
+	if ((c >= '0') && (c <= '9'))
+		return (1);
+	return (0);
+}
+
+int is_type(char c)
+{
+	int	i;
+
+	i = 0;
+	while(TYPES[i])
+	{
+		if (TYPES[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_flags(char c)
+{
+	int	i;
+	
+	i = 0;
+	while(FLAGS[i])
+	{
+		if (FLAGS[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);	
+}
+
+
+// ####################################
+
+char	*plus_flag_str( t_list *t,char *str)
+{
+	int	nb;
+	char *prefix;
+	char *final_str;
+
+	// number type and have + or space
+	if((t->type == 'd' || t->type == 'i') && t->f_plus)
+	{
+		nb = ft_atoi(str);
+		if(nb < 0)
+			return (str); // เลขลบใช้ print ได้เลย
+		prefix = ft_calloc(sizeof(char),2);
+		if(prefix == NULL)
+			return (NULL);
+		if(t->f_plus)
+			prefix[0] = '+';
+		else
+			prefix[0] = ' ';
+		final_str = ft_strjoin(prefix,str); // DIFF from original
+		if(final_str == NULL)
+			return (NULL);
+		free(prefix);
+		free(str);
+		return (final_str);
+	}
+	return (str);
+}
+
 
 
 // ############################################
@@ -69,7 +138,7 @@ int print_ptr_to_str(t_list *tp)
 	return (len);
 }
 
-// type int -> str (i,d)
+// type d,i -> str (i,d)
 int print_nbr_to_str(t_list *tp)
 {
 	int	nbr;
@@ -79,6 +148,13 @@ int print_nbr_to_str(t_list *tp)
 	// len = 0;
 	nbr = va_arg(tp->ap, int);
 	s = nbr_to_str_dec(nbr);
+	if(tp->f_plus)
+	{
+		
+		s = plus_flag_str(tp,s);
+	}
+
+
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
 	free(s);
@@ -136,42 +212,17 @@ void print_format(t_list *tp)
 // #####################################################################################
 // #####################################################################################
 
-int is_type(char c)
-{
-	int	i;
-
-	i = 0;
-	while(TYPES[i])
-	{
-		if (TYPES[i] == c)
-			return (1);
-		i++;
-	}
-	return (0);
-}
 
 
 // ############################################
 // ################## table-print #############
 // ############################################
 
-int	is_flags(char c)
-{
-	int	i;
-	
-	i = 0;
-	while(FLAGS[i])
-	{
-		if (FLAGS[i] == c)
-			return (1);
-		i++;
-	}
-	return (0);	
-}
 
 void t_list_start(t_list *tp)
 {
 	tp->total_len = 0;
+	tp->type = 0;
 }
 void t_list_set_type(t_list *tp,char type)
 {
@@ -203,6 +254,9 @@ void t_list_reset_flags (t_list *tp)
 	tp->f_plus = 1;
 }
 
+// FLAGS HANDLE
+
+// DONE : PLUS and SPACE
 
 // ############################################
 // ################## core-function #############
@@ -215,6 +269,7 @@ int	ft_printf(const char *format, ...)
 	va_list ap; // ap : argument process
 	t_list *tp;
 	char flag;
+	char d_str;
 	char type;
 
 	i = 0; 
@@ -230,6 +285,23 @@ int	ft_printf(const char *format, ...)
 		if(*(format + i) == '%')
 		{
 			i++;
+			while (tp->type == 0 && !is_type(*(format+i)))
+			{
+				if(is_flags(*(format+i)))
+				{
+					flag = *(format + i);
+					t_list_set_flag(tp,flag);
+				}
+				else if(ft_isdigit(*(format + i)))
+				{
+					d_str = *(format+i);
+					if(tp->f_dot)
+						tp->precision = (tp->precision * 10) + (d_str - '0');
+					else 
+						tp->width = (tp->width * 10) + (d_str - '0');
+				}
+				i++;
+			}
 			if(is_type(*(format + i)))
 			{
 				type = *(format + i);
@@ -237,13 +309,6 @@ int	ft_printf(const char *format, ...)
 				print_format(tp);	
 				t_list_reset_flags(tp);
 			}
-			else if(is_flags(*(format+i)))
-			{
-				flag = *(format + i);
-				t_list_set_flag(tp,flag);
-			}
-			
-
 		}
 		else 
 			total_len += write(1, format + i, 1);
