@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 13:12:52 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 13:58:23 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include	<unistd.h>
 # include	<stdio.h>
 
+#define TYPES "cspdiuxX%"
+
 typedef struct s_list
 {
 	va_list	ap;
@@ -27,7 +29,7 @@ typedef struct s_list
 	// int		zero;
 	// int		dot;
 	// int		minus;
-	// int		total_len;
+	int		total_len;
 	// int		plus;
 	// int		is_zero;
 	// int		percent;

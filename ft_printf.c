@@ -6,19 +6,17 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 13:17:44 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 14:12:22 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
 
-
-
-
 // ############################################
 // ################## PRINT EACH TYPE -> TO STR
 // ############################################
+
 
 // type c
 int print_char(t_list *tp)
@@ -27,6 +25,7 @@ int print_char(t_list *tp)
 	
 	c = va_arg(tp->ap, int);
 	ft_putchar_fd(c,1);
+	tp->total_len += 1;
 	return (1);
 	
 }
@@ -41,14 +40,15 @@ int print_str(t_list *tp)
 	s = va_arg(tp->ap, char *);
 	if(s)
 	{
-		len = ft_strlen(s);
 		ft_putstr_fd(s,1);
+		len = ft_strlen(s);
 	} 
 	else
 	{
 		ft_putstr_fd("(null)",4);
 		len = 6;
 	}
+	tp->total_len += len;
 	return (len);
 }
 
@@ -65,6 +65,7 @@ int print_ptr_to_str(t_list *tp)
 	ft_putstr_fd(address_str,1);
 	len = (int)ft_strlen(address_str);
 	free(address_str);
+	tp->total_len += len;
 	return (len);
 }
 
@@ -81,6 +82,7 @@ int print_nbr_to_str(t_list *tp)
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
 	free(s);
+	tp->total_len += len;
 
 	return (len);
 }
@@ -97,12 +99,60 @@ int print_uint_to_strbase(t_list *tp, char type,unsigned int base)
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
 	free(s);
+	tp->total_len += len;
 	return (len);
+}
+
+int	print_percent(t_list *tp)
+{
+	tp->total_len += write(1, "%",1);
+	return (1);
+}
+void print_format(t_list *tp)
+{
+	char 	type;
+
+	type = tp->type;
+	if(type == 'c')
+		print_char(tp);
+	else if(type == 's')
+				print_str(tp);
+	else if(type == 'p')
+			print_ptr_to_str(tp);
+	else if(type == 'd' || type == 'i')
+			print_nbr_to_str(tp);
+	else if(type == 'u')
+			print_uint_to_strbase(tp,'d',10);
+	else if(type == 'x')
+			print_uint_to_strbase(tp,'x',16);
+	else if(type == 'X')
+			print_uint_to_strbase(tp,'X',16);
+	else if(type == '%')
+			print_percent(tp);
+	
+}
+
+// #####################################################################################
+// #####################################################################################
+// #####################################################################################
+
+int is_type(char c)
+{
+	int	i;
+
+	i = 0;
+	while(TYPES[i])
+	{
+		if (TYPES[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 
 // ############################################
-// ################## table-print
+// ################## table-print #############
 // ############################################
 
 int	ft_printf(const char *format, ...)
@@ -119,33 +169,24 @@ int	ft_printf(const char *format, ...)
 		return (-1);
 
 	va_start(tp->ap, format);
+	tp->total_len = 0;
 	while(*(format + i))
 	{
 		if(*(format + i) == '%')
 		{
 			i++;
-			if(*(format + i) == 'c')
-				total_len += print_char(tp);	
-			else if(*(format + i) == 's')
-				total_len += print_str(tp);
-			else if(*(format + i) == 'p')
-				total_len += print_ptr_to_str(tp);
-			else if(*(format + i) == 'd' || *(format + i) == 'i')
-				total_len += print_nbr_to_str(tp);
-			else if(*(format + i) == 'u')
-				total_len += print_uint_to_strbase(tp,'d',10);
-			else if(*(format +i) == 'x')
-				total_len += print_uint_to_strbase(tp,'x',16);
-			else if(*(format +i) == 'X')
-				total_len += print_uint_to_strbase(tp,'X',16);
-			else if(*(format +i) == '%')
-				total_len += write(1, "%",1);
+			if(is_type(*(format + i)))
+			{
+					tp->type = *(format + i);
+					print_format(tp);	
+			}
 		}
 		else 
 			total_len += write(1, format + i, 1);
 		i++;
 	}
 	va_end(ap);
+	total_len += tp->total_len;
 	return (total_len);
 }
 
