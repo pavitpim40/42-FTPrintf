@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 01:58:43 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 13:14:46 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,24 @@
 // ############################################
 
 // type c
-int print_char(va_list *ap)
+int print_char(t_list *tp)
 {
 	char c;
 	
-	c = va_arg(*ap, int);
+	c = va_arg(tp->ap, int);
 	ft_putchar_fd(c,1);
 	return (1);
 	
 }
 
 // type char *
-int print_str(va_list *ap)
+int print_str(t_list *tp)
 {
 	char *s;
 	int len;
 	
 	// len = 0;
-	s = va_arg(*ap, char *);
+	s = va_arg(tp->ap, char *);
 	if(s)
 	{
 		len = ft_strlen(s);
@@ -53,14 +53,14 @@ int print_str(va_list *ap)
 }
 
 // type unsigned long -> hex
-int print_ptr_to_str(va_list *ap)
+int print_ptr_to_str(t_list *tp)
 {
 	size_t address;
 	char	*address_str;
 	int len;
 
 	// len = 0;
-	address = va_arg(*ap,size_t);
+	address = va_arg(tp->ap,size_t);
 	address_str = ptr_to_str(address);
 	ft_putstr_fd(address_str,1);
 	len = (int)ft_strlen(address_str);
@@ -69,14 +69,14 @@ int print_ptr_to_str(va_list *ap)
 }
 
 // type int -> str (i,d)
-int print_nbr_to_str(va_list *ap)
+int print_nbr_to_str(t_list *tp)
 {
 	int	nbr;
 	char *s;
 	int	len;
 
 	// len = 0;
-	nbr = va_arg(*ap, int);
+	nbr = va_arg(tp->ap, int);
 	s = nbr_to_str_dec(nbr);
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
@@ -86,13 +86,13 @@ int print_nbr_to_str(va_list *ap)
 }
 
 // type unsigned int -> hex
-int print_uint_to_strbase(va_list *ap, char type,unsigned int base)
+int print_uint_to_strbase(t_list *tp, char type,unsigned int base)
 {
 	unsigned int nbr;
 	char *s;
 	int	len;
 	
-	nbr = va_arg(*ap, unsigned int);
+	nbr = va_arg(tp->ap, unsigned int);
 	s = uint_to_str_base(nbr, type,base);
 	len = ft_strlen(s);
 	ft_putstr_fd(s,1);
@@ -101,41 +101,47 @@ int print_uint_to_strbase(va_list *ap, char type,unsigned int base)
 }
 
 
-
+// ############################################
+// ################## table-print
+// ############################################
 
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
+	t_list *tp;
+
+	
 
 	i = 0;
 	total_len = 0;
-	va_start(ap, format);
+	tp = (t_list*)calloc(sizeof(t_list),1);
+	if (!tp)
+		return (-1);
+
+	va_start(tp->ap, format);
 	while(*(format + i))
 	{
 		if(*(format + i) == '%')
 		{
 			i++;
 			if(*(format + i) == 'c')
-				total_len += print_char(&ap);	
+				total_len += print_char(tp);	
 			else if(*(format + i) == 's')
-				total_len += print_str(&ap);
+				total_len += print_str(tp);
 			else if(*(format + i) == 'p')
-				total_len += print_ptr_to_str(&ap);
+				total_len += print_ptr_to_str(tp);
 			else if(*(format + i) == 'd' || *(format + i) == 'i')
-				total_len += print_nbr_to_str(&ap);
+				total_len += print_nbr_to_str(tp);
 			else if(*(format + i) == 'u')
-				total_len += print_uint_to_strbase(&ap,'d',10);
+				total_len += print_uint_to_strbase(tp,'d',10);
 			else if(*(format +i) == 'x')
-				total_len += print_uint_to_strbase(&ap,'x',16);
+				total_len += print_uint_to_strbase(tp,'x',16);
 			else if(*(format +i) == 'X')
-				total_len += print_uint_to_strbase(&ap,'X',16);
+				total_len += print_uint_to_strbase(tp,'X',16);
 			else if(*(format +i) == '%')
 				total_len += write(1, "%",1);
-			
-			
-			
 		}
 		else 
 			total_len += write(1, format + i, 1);

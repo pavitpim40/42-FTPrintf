@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 02:00:40 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 13:12:52 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,24 @@
 # include	<stdarg.h>
 # include	<unistd.h>
 # include	<stdio.h>
+
+typedef struct s_list
+{
+	va_list	ap;
+	// int		width;
+	// int		precision;
+	// int		zero;
+	// int		dot;
+	// int		minus;
+	// int		total_len;
+	// int		plus;
+	// int		is_zero;
+	// int		percent;
+	// int		space;
+	// int		hash;
+	char	type;
+}	t_list;
+
 
 int		ft_printf(const char *format, ...);
 
