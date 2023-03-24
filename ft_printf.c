@@ -6,11 +6,69 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 16:14:47 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/25 02:04:55 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
+
+// #### ALIGN
+
+
+int	printlen(char *str)
+{
+	int		n;
+
+	n = ft_strlen(str);
+	// printf("strlen : %d and %s", n, str);
+
+	if (n == 0)
+		return (1);
+	else
+		return (n);
+}
+
+char	*align_left(char *str, t_list *fmt)
+{
+	char	*fstr;
+	int		i;
+	int		plen;
+
+	i = 0;
+	// นับความยาวของ string ที่จะ print 
+	plen = printlen(str);
+	// printf("strlen : %d", plen);
+
+	// จองพื้นที่
+	fstr = ft_calloc(sizeof(char), fmt->width + 1);
+	// printf("fmt->width %d", fmt->width);
+	if (!fstr)
+		return (NULL);
+
+	// อะไรวะ ?
+	if (plen == 1 && (fmt->f_dot && fmt->precision == 0)
+		&& (*str == '0' || *str == 0))
+		fstr[i++] = ' ';
+
+	
+	while (i < fmt->width)
+	{
+		// printf("%c", str[i]);
+		if (i < plen && (fmt->type == 's' && *str == 0))
+			fstr[i] = ' ';
+		 if (i < plen)
+		{
+			fstr[i] = str[i];
+			printf("hi");
+		}
+			
+		else
+			fstr[i] = ' ';
+		i++;
+	}
+	// free(str);
+	return (fstr);
+}
 
 // ##FT_IS
 int	ft_isdigit(int c)
@@ -80,6 +138,9 @@ char	*plus_flag_str( t_list *t,char *str)
 	return (str);
 }
 
+// ############################################
+// ################## GENERATE FINAL PRINT ####
+// ############################################
 
 
 // ############################################
@@ -91,26 +152,48 @@ char	*plus_flag_str( t_list *t,char *str)
 int print_char(t_list *tp)
 {
 	char c;
-	
+	int	 i;
 	c = va_arg(tp->ap, int);
+	i = 0;
+
+	if(tp->width && tp->f_minus) // %-2c 
+	{
+	
+		ft_putchar_fd(c,1);
+		i++;
+		while(i < tp->width)
+		{
+			ft_putchar_fd(' ',1);
+			i++;
+		}
+		tp->total_len += tp->width;
+		return (1);
+	}
 	ft_putchar_fd(c,1);
 	tp->total_len += 1;
 	return (1);
-	
 }
 
 // type char *
 int print_str(t_list *tp)
 {
 	char *s;
+	char *f_str;
 	int len;
 	
 	// len = 0;
+	f_str = NULL;
 	s = va_arg(tp->ap, char *);
+	
 	if(s)
 	{
-		ft_putstr_fd(s,1);
-		len = ft_strlen(s);
+		// printf("%zu\n",ft_strlen(s));
+		if(tp->f_minus)
+			f_str = align_left(s,tp);
+		// printf("%zu",ft_strlen(f_str));
+		ft_putstr_fd(f_str,1);
+		len = ft_strlen(f_str);
+		free(f_str);
 	} 
 	else
 	{
@@ -148,11 +231,11 @@ int print_nbr_to_str(t_list *tp)
 	// len = 0;
 	nbr = va_arg(tp->ap, int);
 	s = nbr_to_str_dec(nbr);
-	if(tp->f_plus)
-	{
+	// if(tp->f_plus)
+	// {
 		
-		s = plus_flag_str(tp,s);
-	}
+	// 	s = plus_flag_str(tp,s);
+	// }
 
 
 	len = ft_strlen(s);
@@ -189,8 +272,9 @@ void print_format(t_list *tp)
 	char 	type;
 
 	type = tp->type;
+	// printf("type : %c\n",type);
 	if(type == 'c')
-		print_char(tp);
+			print_char(tp);
 	else if(type == 's')
 				print_str(tp);
 	else if(type == 'p')
@@ -251,7 +335,9 @@ void t_list_reset_flags (t_list *tp)
 	tp->f_dot = 0;
 	tp->f_hash = 0;
 	tp->f_space = 0;
-	tp->f_plus = 1;
+	tp->f_plus = 0;
+	tp->width = 0;
+	tp->type = 0;
 }
 
 // FLAGS HANDLE
@@ -285,8 +371,10 @@ int	ft_printf(const char *format, ...)
 		if(*(format + i) == '%')
 		{
 			i++;
+			// printf("i = %d\n",i);
 			while (tp->type == 0 && !is_type(*(format+i)))
-			{
+			{	
+				// printf("I = %d\n",i);
 				if(is_flags(*(format+i)))
 				{
 					flag = *(format + i);
@@ -297,13 +385,15 @@ int	ft_printf(const char *format, ...)
 					d_str = *(format+i);
 					if(tp->f_dot)
 						tp->precision = (tp->precision * 10) + (d_str - '0');
-					else 
+					else
 						tp->width = (tp->width * 10) + (d_str - '0');
 				}
 				i++;
 			}
+			
 			if(is_type(*(format + i)))
 			{
+				// printf("HI\n");
 				type = *(format + i);
 				t_list_set_type(tp,type);
 				print_format(tp);	
@@ -321,6 +411,8 @@ int	ft_printf(const char *format, ...)
 
 // int main()
 // {
+	// int len;
+
 
 	// # MAN-CHAR
 	// printf("%c", '0');
@@ -348,4 +440,34 @@ int	ft_printf(const char *format, ...)
 	// ft_printf(" NULL %s NULL ", NULL);
 
 	// ft_printf(" %p ",-1);
-// }
+		// ft_printf(" %-s :\n", "-");
+		// printf(" %-s ", "-");
+		// printf("%d",len);
+		// printf(" %-s ", "-");
+
+	// TEST(1, print("%-1c", '0'));
+
+	// int len = 0;
+// 	len = ft_printf("%-1c:%-2c:%-3c:", '0', 0, '1');
+// 	printf("len = %d\n",len);
+// // TEST(5, print());
+// 	len = printf("%-1c:%-2c:%-3c:", '0', 0, '1'); // 4sp + '0' ' 1 '
+// 	printf("len = %d\n",len);
+
+	// int len = 0;
+	// len = ft_printf("%-2c", 0);
+	// printf("len = %d\n",len);
+// TEST(5, print());
+	// len = printf("%-2c",0);
+	// printf("len = %d\n",len);
+
+
+	// TEST(3, print(" %-3c", '0' - 256));
+	// TEST(4, print("%-4c ", '0' + 256));
+	// TEST(5, print(" %-1c %-2c %-3c ", '0', 0, '1'));
+	// TEST(6, print(" %-1c %-2c %-3c ", ' ', ' ', ' '));
+	// TEST(7, print(" %-1c %-2c %-3c ", '1', '2', '3'));
+	// TEST(8, print(" %-1c %-2c %-3c ", '2', '1', 0));
+	// TEST(9, print(" %-1c %-2c %-3c ", 0, '1', '2'));
+
+//  }

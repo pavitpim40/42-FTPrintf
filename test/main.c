@@ -2,5 +2,5 @@
 #include <stdio.h>
 int main()
 {
-	printf(" %p ",-1);
+	printf(" %-s ", "-");
 }
