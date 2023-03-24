@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/25 02:39:34 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/25 02:47:02 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,60 +15,7 @@
 // #### ALIGN
 
 
-int	printlen(char *str)
-{
-	int		n;
 
-	n = ft_strlen(str);
-	// printf("strlen : %d and %s", n, str);
-
-	if (n == 0)
-		return (1);
-	else
-		return (n);
-}
-
-// char	*align_left(char *str, t_list *fmt)
-// {
-// 	char	*fstr;
-// 	int		i;
-// 	int		plen;
-
-// 	i = 0;
-// 	// นับความยาวของ string ที่จะ print 
-// 	plen = printlen(str);
-// 	// printf("strlen : %d", plen);
-
-// 	// จองพื้นที่
-// 	fstr = ft_calloc(sizeof(char), fmt->width + 1);
-// 	// printf("fmt->width %d", fmt->width);
-// 	if (!fstr)
-// 		return (NULL);
-
-// 	// อะไรวะ ?
-// 	if (plen == 1 && (fmt->f_dot && fmt->precision == 0)
-// 		&& (*str == '0' || *str == 0))
-// 		fstr[i++] = ' ';
-
-	
-// 	while (i < fmt->width)
-// 	{
-// 		// printf("%c", str[i]);
-// 		if (i < plen && (fmt->type == 's' && *str == 0))
-// 			fstr[i] = ' ';
-// 		 if (i < plen)
-// 		{
-// 			fstr[i] = str[i];
-// 			printf("hi");
-// 		}
-			
-// 		else
-// 			fstr[i] = ' ';
-// 		i++;
-// 	}
-// 	// free(str);
-// 	return (fstr);
-// }
 
 // ##FT_IS
 int	ft_isdigit(int c)
@@ -156,6 +103,7 @@ int print_char(t_list *tp)
 	c = va_arg(tp->ap, int);
 	i = 0;
 
+	// 1.Algin Left
 	if(tp->width && tp->f_minus) // %-2c 
 	{
 	
@@ -169,6 +117,7 @@ int print_char(t_list *tp)
 		tp->total_len += tp->width;
 		return (1);
 	}
+	// ปกติ
 	ft_putchar_fd(c,1);
 	tp->total_len += 1;
 	return (1);
@@ -183,10 +132,9 @@ char	*align_left(char *str,int width)
 
 		i = 0;
 		len = ft_strlen(str);
-		// 	1.กรณีที่ str ยาวกว่า width
-		// //  2.กรณีที่ str สั้นกว่า width
-		// printf("len = %d\n",len);
-		// printf("width = %d\n",width);
+	
+		// 1.กรณีที่ str สั้นกว่า width
+
 		if(len < width)
 		{
 			p_str = malloc(sizeof(char)*width+1);
@@ -203,13 +151,9 @@ char	*align_left(char *str,int width)
 			free(str);
 			return (p_str);
 		}
-		else
-		{
-			// p_str =ft_strdup(str);
+		// 	2.กรณีที่ str ยาวกว่า width
+		else 	
 			return (str);
-		}
-			
-		
 }
 
 // type char *
@@ -219,27 +163,26 @@ int print_str(t_list *tp)
 	char *f_str;
 	int len;
 	
-	// len = 0;
+	len = 0;
 	f_str = NULL;
 	s = va_arg(tp->ap, char *);
 	f_str = ft_strdup(s);
 	if(s)
 	{
-		// printf("len : %zu\n",ft_strlen(s));
+		// 1.Align left
 		if(tp->f_minus)
 		{
 			f_str = align_left(f_str,tp->width);
 			ft_putstr_fd(f_str,1);
-			tp->total_len += ft_strlen(f_str);
+			len += ft_strlen(f_str);
 			free(f_str);
-			return (1);
 		}
-			
-		// printf("%zu",ft_strlen(f_str));
-		ft_putstr_fd(f_str,1);
-		len = ft_strlen(f_str);
-		tp->total_len += len;
-		free(f_str);
+		// 2.Align Right
+		
+		// 3.Not Align - Normal print
+		else {ft_putstr_fd(f_str,1);
+		len += ft_strlen(f_str);
+		free(f_str);}
 	} 
 	else
 	{
