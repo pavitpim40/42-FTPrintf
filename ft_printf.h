@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 16:11:01 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/25 02:21:52 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,6 @@ int		ft_atoi(const char *str);
 
 // STR MASTER
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strdup(const char *s1);
 
 #endif

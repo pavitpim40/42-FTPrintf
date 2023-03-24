@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/25 02:04:55 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/25 02:39:34 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,47 +28,47 @@ int	printlen(char *str)
 		return (n);
 }
 
-char	*align_left(char *str, t_list *fmt)
-{
-	char	*fstr;
-	int		i;
-	int		plen;
+// char	*align_left(char *str, t_list *fmt)
+// {
+// 	char	*fstr;
+// 	int		i;
+// 	int		plen;
 
-	i = 0;
-	// นับความยาวของ string ที่จะ print 
-	plen = printlen(str);
-	// printf("strlen : %d", plen);
+// 	i = 0;
+// 	// นับความยาวของ string ที่จะ print 
+// 	plen = printlen(str);
+// 	// printf("strlen : %d", plen);
 
-	// จองพื้นที่
-	fstr = ft_calloc(sizeof(char), fmt->width + 1);
-	// printf("fmt->width %d", fmt->width);
-	if (!fstr)
-		return (NULL);
+// 	// จองพื้นที่
+// 	fstr = ft_calloc(sizeof(char), fmt->width + 1);
+// 	// printf("fmt->width %d", fmt->width);
+// 	if (!fstr)
+// 		return (NULL);
 
-	// อะไรวะ ?
-	if (plen == 1 && (fmt->f_dot && fmt->precision == 0)
-		&& (*str == '0' || *str == 0))
-		fstr[i++] = ' ';
+// 	// อะไรวะ ?
+// 	if (plen == 1 && (fmt->f_dot && fmt->precision == 0)
+// 		&& (*str == '0' || *str == 0))
+// 		fstr[i++] = ' ';
 
 	
-	while (i < fmt->width)
-	{
-		// printf("%c", str[i]);
-		if (i < plen && (fmt->type == 's' && *str == 0))
-			fstr[i] = ' ';
-		 if (i < plen)
-		{
-			fstr[i] = str[i];
-			printf("hi");
-		}
+// 	while (i < fmt->width)
+// 	{
+// 		// printf("%c", str[i]);
+// 		if (i < plen && (fmt->type == 's' && *str == 0))
+// 			fstr[i] = ' ';
+// 		 if (i < plen)
+// 		{
+// 			fstr[i] = str[i];
+// 			printf("hi");
+// 		}
 			
-		else
-			fstr[i] = ' ';
-		i++;
-	}
-	// free(str);
-	return (fstr);
-}
+// 		else
+// 			fstr[i] = ' ';
+// 		i++;
+// 	}
+// 	// free(str);
+// 	return (fstr);
+// }
 
 // ##FT_IS
 int	ft_isdigit(int c)
@@ -174,6 +174,44 @@ int print_char(t_list *tp)
 	return (1);
 }
 
+
+char	*align_left(char *str,int width)
+{
+		int	i;
+		int	len;
+		char *p_str;
+
+		i = 0;
+		len = ft_strlen(str);
+		// 	1.กรณีที่ str ยาวกว่า width
+		// //  2.กรณีที่ str สั้นกว่า width
+		// printf("len = %d\n",len);
+		// printf("width = %d\n",width);
+		if(len < width)
+		{
+			p_str = malloc(sizeof(char)*width+1);
+			if(!p_str)
+				return (NULL);
+			while(i<width)
+			{
+				if(i < len)
+					p_str[i] = str[i];
+				else
+					p_str[i] = ' ';
+				i++;
+			}
+			free(str);
+			return (p_str);
+		}
+		else
+		{
+			// p_str =ft_strdup(str);
+			return (str);
+		}
+			
+		
+}
+
 // type char *
 int print_str(t_list *tp)
 {
@@ -184,15 +222,23 @@ int print_str(t_list *tp)
 	// len = 0;
 	f_str = NULL;
 	s = va_arg(tp->ap, char *);
-	
+	f_str = ft_strdup(s);
 	if(s)
 	{
-		// printf("%zu\n",ft_strlen(s));
+		// printf("len : %zu\n",ft_strlen(s));
 		if(tp->f_minus)
-			f_str = align_left(s,tp);
+		{
+			f_str = align_left(f_str,tp->width);
+			ft_putstr_fd(f_str,1);
+			tp->total_len += ft_strlen(f_str);
+			free(f_str);
+			return (1);
+		}
+			
 		// printf("%zu",ft_strlen(f_str));
 		ft_putstr_fd(f_str,1);
 		len = ft_strlen(f_str);
+		tp->total_len += len;
 		free(f_str);
 	} 
 	else
@@ -447,6 +493,7 @@ int	ft_printf(const char *format, ...)
 
 	// TEST(1, print("%-1c", '0'));
 
+
 	// int len = 0;
 // 	len = ft_printf("%-1c:%-2c:%-3c:", '0', 0, '1');
 // 	printf("len = %d\n",len);
@@ -455,11 +502,13 @@ int	ft_printf(const char *format, ...)
 // 	printf("len = %d\n",len);
 
 	// int len = 0;
-	// len = ft_printf("%-2c", 0);
+	// len = ft_printf(":%1s", "");
 	// printf("len = %d\n",len);
 // TEST(5, print());
-	// len = printf("%-2c",0);
-	// printf("len = %d\n",len);
+	// len = printf(":%1s", "");
+	// printf("len = %d\n",len); 
+
+	// TEST(11, print("%-1s", ""));
 
 
 	// TEST(3, print(" %-3c", '0' - 256));

@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 23:00:04 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:01:32 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/25 02:21:40 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,24 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	res[i] = '\0';
 	return (res);
+}
+
+char	*ft_strdup(const char *s1)
+{
+	int		len;
+	int		i;
+	char	*result;
+
+	i = 0;
+	len = ft_strlen(s1);
+	result = malloc(len + 1);
+	if (result == 0)
+		return (0);
+	while (i < len)
+	{
+		result[i] = s1[i];
+		i++;
+	}
+	result[i] = '\0';
+	return (result);
 }
