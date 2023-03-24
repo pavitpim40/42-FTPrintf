@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 14:12:22 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 15:12:13 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,21 +155,76 @@ int is_type(char c)
 // ################## table-print #############
 // ############################################
 
+int	is_flags(char c)
+{
+	int	i;
+	
+	i = 0;
+	while(FLAGS[i])
+	{
+		if (FLAGS[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);	
+}
+
+void t_list_start(t_list *tp)
+{
+	tp->total_len = 0;
+}
+void t_list_set_type(t_list *tp,char type)
+{
+	tp->type = type;
+}
+
+void t_list_set_flag(t_list *tp, char flag)
+{
+	if(flag == '-')
+		tp->f_minus = 1;
+	else if(flag == '0')
+		tp->f_zero = 1;
+	else if(flag == '.')
+		tp->f_dot = 1;
+	else if(flag == '#')
+		tp->f_hash = 1;
+	else if(flag == ' ')
+		tp->f_space = 1;
+	else if(flag == '+')
+		tp->f_plus = 1;
+}
+void t_list_reset_flags (t_list *tp)
+{
+	tp->f_minus = 0;
+	tp->f_zero = 0;
+	tp->f_dot = 0;
+	tp->f_hash = 0;
+	tp->f_space = 0;
+	tp->f_plus = 1;
+}
+
+
+// ############################################
+// ################## core-function #############
+// ############################################
+
 int	ft_printf(const char *format, ...)
 {
 	int	i;
 	int total_len;
 	va_list ap; // ap : argument process
 	t_list *tp;
+	char flag;
+	char type;
 
-	i = 0;
+	i = 0; 
 	total_len = 0;
-	tp = (t_list*)calloc(sizeof(t_list),1);
+	tp = (t_list *)calloc(sizeof(t_list),1);
 	if (!tp)
 		return (-1);
-
+	t_list_start(tp);
 	va_start(tp->ap, format);
-	tp->total_len = 0;
+
 	while(*(format + i))
 	{
 		if(*(format + i) == '%')
@@ -177,9 +232,18 @@ int	ft_printf(const char *format, ...)
 			i++;
 			if(is_type(*(format + i)))
 			{
-					tp->type = *(format + i);
-					print_format(tp);	
+				type = *(format + i);
+				t_list_set_type(tp,type);
+				print_format(tp);	
+				t_list_reset_flags(tp);
 			}
+			else if(is_flags(*(format+i)))
+			{
+				flag = *(format + i);
+				t_list_set_flag(tp,flag);
+			}
+			
+
 		}
 		else 
 			total_len += write(1, format + i, 1);
