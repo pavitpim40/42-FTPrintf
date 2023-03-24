@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 13:14:46 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/24 13:17:44 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,6 @@ int	ft_printf(const char *format, ...)
 	int total_len;
 	va_list ap; // ap : argument process
 	t_list *tp;
-
-	
 
 	i = 0;
 	total_len = 0;
