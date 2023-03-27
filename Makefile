@@ -6,14 +6,15 @@
 #    By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/23 19:54:43 by ppimchan          #+#    #+#              #
-#    Updated: 2023/03/24 02:01:05 by ppimchan         ###   ########.fr        #
+#    Updated: 2023/03/27 14:21:40 by ppimchan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 DIRSRC	=	./
 
 SRC		=	ft_printf.c  ft_putchar_fd.c ft_putstr_fd.c \
-			ft_len.c ft_str.c ft_mem.c ft_itoa.c ft_nbr_to_str.c
+			ft_len.c ft_str.c ft_mem.c ft_itoa.c ft_nbr_to_str.c \
+			ft_print_type.c
 
 
 BONUS	=

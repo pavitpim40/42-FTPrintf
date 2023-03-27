@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:29 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/27 14:17:07 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/27 14:22:15 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@ int	ft_print_type(t_list *tp, char type)
 
 	print_len = 0;
 	if (type == 'c')
-		print_len += print_char(tp->ap);
+		print_len += print_char(tp);
 	else if (type == 's')
-		print_len += print_str(tp->ap);
+		print_len += print_str(tp);
 	else if (type == 'p')
-		print_len += print_ptr_to_str(tp->ap);
+		print_len += print_ptr_to_str(tp);
 	else if (type == 'd' || type == 'i')
-		print_len += print_nbr_to_str(tp->ap);
+		print_len += print_nbr_to_str(tp);
 	else if (type == 'u')
-		print_len += print_uint_to_strbase(tp->ap, 'd', 10);
+		print_len += print_uint_to_strbase(tp, 'd', 10);
 	else if (type == 'x')
-		print_len += print_uint_to_strbase(tp->ap, 'x', 16);
+		print_len += print_uint_to_strbase(tp, 'x', 16);
 	else if (type == 'X')
-		print_len += print_uint_to_strbase(tp->ap, 'X', 16);
+		print_len += print_uint_to_strbase(tp, 'X', 16);
 	else if (type == '%')
 		print_len += write(1, "%", 1);
 	return (print_len);
@@ -54,6 +54,7 @@ int	ft_printf(const char *format, ...)
 		if (*(format + i) == '%')
 		{
 			i++;
+			total_len += ft_print_type(tp, *(format + i));
 		}
 		else
 			total_len += write(1, format + i, 1);

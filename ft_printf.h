@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/27 14:12:03 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/27 14:20:17 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int		ft_printf(const char *format, ...);
 int		print_char(t_list *tp);
 int		print_str(t_list *tp);
 int		print_ptr_to_str(t_list *tp);
+int		print_nbr_to_str(t_list *tp);
 int		print_uint_to_strbase(t_list *tp, char type, unsigned int base);
 
 // MEM
