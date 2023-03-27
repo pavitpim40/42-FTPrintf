@@ -6,15 +6,11 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 01:56:58 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 01:58:48 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/27 13:46:11 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-// ############################################
-// ################## CONVERT NUM -> TO STR BASE
-// ############################################
 
 char	*nbr_to_str_dec(int d)
 {
@@ -26,7 +22,7 @@ char	*nbr_to_str_dec(int d)
 	return (str);
 }
 
-char	*uint_to_str_base(unsigned int x, char type,unsigned int base)
+char	*uint_to_str_base(unsigned int x, char type, unsigned int base)
 {
 	char	*set;
 	char	*res;
@@ -34,7 +30,7 @@ char	*uint_to_str_base(unsigned int x, char type,unsigned int base)
 
 	if (type == 'x')
 		set = "0123456789abcdef";
-	else if(type == 'X')
+	else if (type == 'X')
 		set = "0123456789ABCDEF";
 	else if (type == 'd')
 		set = "0123456789";
@@ -51,8 +47,6 @@ char	*uint_to_str_base(unsigned int x, char type,unsigned int base)
 	*(res) = set[x];
 	return (res);
 }
-
-
 
 char	*ulong_to_str_hex(size_t x, char format)
 {
@@ -80,7 +74,6 @@ char	*ulong_to_str_hex(size_t x, char format)
 	free(res);
 	return (res2);
 }
-
 
 char	*ptr_to_str(size_t p)
 {

@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 23:02:17 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/23 23:02:56 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/27 13:44:57 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 
-
 void	*ft_calloc(size_t count, size_t size)
 {
 	void	*ptr;
@@ -39,4 +38,3 @@ void	*ft_calloc(size_t count, size_t size)
 	ft_bzero(ptr, count * size);
 	return (ptr);
 }
-

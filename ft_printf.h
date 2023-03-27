@@ -6,7 +6,7 @@
 /*   By: ppimchan <ppimchan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 19:41:23 by ppimchan          #+#    #+#             */
-/*   Updated: 2023/03/24 13:12:52 by ppimchan         ###   ########.fr       */
+/*   Updated: 2023/03/27 14:12:03 by ppimchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,16 @@
 typedef struct s_list
 {
 	va_list	ap;
-	// int		width;
-	// int		precision;
-	// int		zero;
-	// int		dot;
-	// int		minus;
-	// int		total_len;
-	// int		plus;
-	// int		is_zero;
-	// int		percent;
-	// int		space;
-	// int		hash;
 	char	type;
 }	t_list;
 
-
 int		ft_printf(const char *format, ...);
 
+// Print
+int		print_char(t_list *tp);
+int		print_str(t_list *tp);
+int		print_ptr_to_str(t_list *tp);
+int		print_uint_to_strbase(t_list *tp, char type, unsigned int base);
 
 // MEM
 void	ft_bzero(void *s, size_t n);
@@ -47,7 +40,6 @@ void	*ft_calloc(size_t count, size_t size);
 // PUT
 void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
-
 
 // LEN
 size_t	ft_strlen(const char *s);
@@ -58,7 +50,7 @@ size_t	ft_uint_len(unsigned int nb, int div);
 char	*ptr_to_str(size_t p);
 char	*ulong_to_str_hex(size_t x, char format);
 char	*nbr_to_str_dec(int d);
-char	*uint_to_str_base(unsigned int x, char type,unsigned int base);
+char	*uint_to_str_base(unsigned int x, char type, unsigned int base);
 char	*ft_itoa(int n);
 
 // STR MASTER
